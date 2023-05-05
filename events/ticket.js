@@ -120,14 +120,6 @@ client.on("interactionCreate", async interaction => {
             let Embed = new Discord.EmbedBuilder().setColor('Random').setDescription(`Ticket encerrado por ${interaction.user}.`);
             let Other_Embed = new Discord.EmbedBuilder().setColor('Random').setDescription('Painel de controles:');
 
-            const user = await client.users.fetch(userG);
-            const dmChannel = await user.createDM();
-
-            dmChannel.send({
-                content: `Olá ${interaction.user}, aqui está o desfecho do seu ticket, basta fazer **download** e abrir o arquivo .html que abrira uma guia no navegador mostrando as mensagens!`,
-                files: [transcript]
-            });
-
             let Row = new Discord.ActionRowBuilder().addComponents(
                 new Discord.ButtonBuilder().setStyle(Discord.ButtonStyle.Secondary).setCustomId('Transcript').setLabel('Transcript').setEmoji('📑'),
                 new Discord.ButtonBuilder().setStyle(Discord.ButtonStyle.Secondary).setCustomId('Delete').setLabel('Apagar').setEmoji('⛔')
