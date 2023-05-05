@@ -25,7 +25,7 @@ client.on("interactionCreate", async interaction => {
     };
 
     if (interaction.isButton()) {
-        const user = interaction.user;
+        const userGay = interaction.user;
         if (interaction.customId === 'Create') {
             let channelName = `💡・suporte-${interaction.user.username}`
             let existingChannel = interaction.guild.channels.cache.find(c => c.name === channelName);
@@ -137,7 +137,7 @@ client.on("interactionCreate", async interaction => {
 
         if (interaction.customId === 'Delete' && interaction.member.permissions.has(Discord.PermissionFlagsBits.ManageRoles)) {
             const transcript = await Transcript.createTranscript(interaction.channel); // cria o transcript
-            await user.createDM()
+            await userGay.createDM()
                 .then(dm => dm.send({
                     content: `Olá ${interaction.user}, aqui está o desfecho do seu ticket, basta fazer **download** e abrir o arquivo .html que abrira uma guia no navegador mostrando as mensagens!`,
                     files: [transcript]
