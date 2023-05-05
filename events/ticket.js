@@ -12,7 +12,7 @@ client.on("interactionCreate", async interaction => {
                 .setColor("Green")
                 .setThumbnail(`${interaction.guild.iconURL({ dynamic: true })}`)
                 .setTitle("Ticket")
-                .setDescription(`Abra um ticket para resolver seu **problema/suporte** clicando no botão abaixo!`)
+                .setDescription(`Abra um ticket para resolver o seu problema clicando no botão abaixo!`)
                 .setImage("https://share.creavite.co/j904X3ZNpcnlJATg.gif")
             let Row = new Discord.ActionRowBuilder().addComponents(
                 new Discord.ButtonBuilder().setStyle(Discord.ButtonStyle.Secondary).setCustomId('Create').setLabel('Abrir ticket').setEmoji('📩')
@@ -133,14 +133,14 @@ client.on("interactionCreate", async interaction => {
         if (interaction.customId === 'Delete' && !interaction.member.permissions.has(Discord.PermissionFlagsBits.ManageRoles)) {
             interaction.reply({ content: "Você não tem permissão para excluir o canal.", ephemeral: true })
         }
-    
-        if (interaction.customId === 'Delete' && interaction.member.permissions.has(Discord.PermissionFlagsBits.ManageRoles)) {
-/*             const transcript = await Transcript.createTranscript(interaction.channel); // cria o transcript
 
-            await author.createDM().then(dm => dm.send({
-                content: `Olá ${interaction.user}, aqui está o desfecho do seu ticket, basta fazer **download** e abrir o arquivo .html que abrira uma guia no navegador mostrando as mensagens!`,
-                files: [transcript]
-            })); */
+        if (interaction.customId === 'Delete' && interaction.member.permissions.has(Discord.PermissionFlagsBits.ManageRoles)) {
+            /*             const transcript = await Transcript.createTranscript(interaction.channel); // cria o transcript
+            
+                        await author.createDM().then(dm => dm.send({
+                            content: `Olá ${interaction.user}, aqui está o desfecho do seu ticket, basta fazer **download** e abrir o arquivo .html que abrira uma guia no navegador mostrando as mensagens!`,
+                            files: [transcript]
+                        })); */
 
             interaction.message.components[0].components[1].data.disabled = true;
             interaction.update({ components: [interaction.message.components[0]] });
