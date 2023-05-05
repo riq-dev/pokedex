@@ -11,8 +11,8 @@ client.on("interactionCreate", async interaction => {
             let Embed = new Discord.EmbedBuilder()
                 .setColor("Green")
                 .setThumbnail(`${interaction.guild.iconURL({ dynamic: true })}`)
-                .setTitle("Ticket")
-                .setDescription(`Abra um ticket para resolver o seu problema clicando no botão abaixo!`)
+                .setTitle("Suporte")
+                .setDescription(`Abra um ticket para resolver o seu problema clicando no **botão** abaixo!`)
                 .setImage("https://share.creavite.co/j904X3ZNpcnlJATg.gif")
             let Row = new Discord.ActionRowBuilder().addComponents(
                 new Discord.ButtonBuilder().setStyle(Discord.ButtonStyle.Secondary).setCustomId('Create').setLabel('Abrir ticket').setEmoji('📩')
