@@ -25,6 +25,7 @@ client.on("interactionCreate", async interaction => {
     };
 
     if (interaction.isButton()) {
+        const user = interaction.user;
         if (interaction.customId === 'Create') {
             let channelName = `💡・suporte-${interaction.user.username}`
             let existingChannel = interaction.guild.channels.cache.find(c => c.name === channelName);
@@ -135,12 +136,16 @@ client.on("interactionCreate", async interaction => {
         }
 
         if (interaction.customId === 'Delete' && interaction.member.permissions.has(Discord.PermissionFlagsBits.ManageRoles)) {
-            /*             const transcript = await Transcript.createTranscript(interaction.channel); // cria o transcript
-            
-                        await author.createDM().then(dm => dm.send({
-                            content: `Olá ${interaction.user}, aqui está o desfecho do seu ticket, basta fazer **download** e abrir o arquivo .html que abrira uma guia no navegador mostrando as mensagens!`,
-                            files: [transcript]
-                        })); */
+            const transcript = await Transcript.createTranscript(interaction.channel); // cria o transcript
+            await user.createDM()
+                .then(dm => dm.send({
+                    content: `Olá ${interaction.user}, aqui está o desfecho do seu ticket, basta fazer **download** e abrir o arquivo .html que abrira uma guia no navegador mostrando as mensagens!`,
+                    files: [transcript]
+                }))
+                .catch(error => {
+                    console.error(`Ocorreu um erro ao enviar a mensagem privada para o usuário ${user.tag}: ${error}`);
+                    interaction.reply({ content: "Ocorreu um erro ao enviar a mensagem pro author", ephemeral: true })
+                });
 
             interaction.message.components[0].components[1].data.disabled = true;
             interaction.update({ components: [interaction.message.components[0]] });
