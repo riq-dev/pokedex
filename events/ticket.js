@@ -119,8 +119,7 @@ client.on("interactionCreate", async interaction => {
         if (interaction.customId === 'Confirm') {
             let Embed = new Discord.EmbedBuilder().setColor('Random').setDescription(`Ticket encerrado por ${interaction.user}.`);
             let Other_Embed = new Discord.EmbedBuilder().setColor('Random').setDescription('Painel de controles:');
-            
-            const transcript = await Transcript.createTranscript(interaction.channel); // cria o transcript
+
             const user = await client.users.fetch(userG);
             const dmChannel = await user.createDM();
 
@@ -145,6 +144,7 @@ client.on("interactionCreate", async interaction => {
         }
 
         if (interaction.customId === 'Delete' && interaction.member.permissions.has(Discord.PermissionFlagsBits.ManageRoles)) {
+
             interaction.message.components[0].components[1].data.disabled = true;
             interaction.update({ components: [interaction.message.components[0]] });
             interaction.channel.send({ content: "O canal será removido em 3 segundos..." })
