@@ -25,7 +25,8 @@ client.on("interactionCreate", async interaction => {
     };
 
     if (interaction.isButton()) {
-        const userGay = interaction.user;
+        const userG = interaction.user;
+        console.log(`O usuário com o ID ${userG.id} clicou no botão com o customId ${interaction.customId}.`);
         if (interaction.customId === 'Create') {
             let channelName = `💡・suporte-${interaction.user.username}`
             let existingChannel = interaction.guild.channels.cache.find(c => c.name === channelName);
@@ -118,12 +119,20 @@ client.on("interactionCreate", async interaction => {
         if (interaction.customId === 'Confirm') {
             let Embed = new Discord.EmbedBuilder().setColor('Random').setDescription(`Ticket encerrado por ${interaction.user}.`);
             let Other_Embed = new Discord.EmbedBuilder().setColor('Random').setDescription('Painel de controles:');
+            
+            const transcript = await Transcript.createTranscript(interaction.channel); // cria o transcript
+            const user = await client.users.fetch(userG);
+            const dmChannel = await user.createDM();
+
+            dmChannel.send({
+                content: `Olá ${interaction.user}, aqui está o desfecho do seu ticket, basta fazer **download** e abrir o arquivo .html que abrira uma guia no navegador mostrando as mensagens!`,
+                files: [transcript]
+            });
 
             let Row = new Discord.ActionRowBuilder().addComponents(
                 new Discord.ButtonBuilder().setStyle(Discord.ButtonStyle.Secondary).setCustomId('Transcript').setLabel('Transcript').setEmoji('📑'),
                 new Discord.ButtonBuilder().setStyle(Discord.ButtonStyle.Secondary).setCustomId('Delete').setLabel('Apagar').setEmoji('⛔')
             );
-
             interaction.message.delete();
             await interaction.channel.setName(`🔐・fechado-${interaction.channel.name.slice(-4)}`);
             return interaction.channel.send({ embeds: [Embed, Other_Embed], components: [Row] });
@@ -136,17 +145,6 @@ client.on("interactionCreate", async interaction => {
         }
 
         if (interaction.customId === 'Delete' && interaction.member.permissions.has(Discord.PermissionFlagsBits.ManageRoles)) {
-            const transcript = await Transcript.createTranscript(interaction.channel); // cria o transcript
-            await userGay.createDM()
-                .then(dm => dm.send({
-                    content: `Olá ${interaction.user}, aqui está o desfecho do seu ticket, basta fazer **download** e abrir o arquivo .html que abrira uma guia no navegador mostrando as mensagens!`,
-                    files: [transcript]
-                }))
-                .catch(error => {
-                    console.error(`Ocorreu um erro ao enviar a mensagem privada para o usuário ${user.tag}: ${error}`);
-                    interaction.reply({ content: "Ocorreu um erro ao enviar a mensagem pro author", ephemeral: true })
-                });
-
             interaction.message.components[0].components[1].data.disabled = true;
             interaction.update({ components: [interaction.message.components[0]] });
             interaction.channel.send({ content: "O canal será removido em 3 segundos..." })
