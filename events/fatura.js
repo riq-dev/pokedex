@@ -1,16 +1,14 @@
 const Discord = require('discord.js');
 const client = require('../index')
-const moment = require('moment');
 const { PIX } = require('gpix/dist');
 const Canvas = require('canvas');
+const cron = require('node-cron');
+const moment = require('moment');
 
 client.on('ready', () => {
     const cliente = client.users.cache.get('863979764317552640')
 
-    async function verificarPrazoPagamento() {
-        const createData = moment();
-        const paymentData = moment(createData).add(1, 'days');
-        const vencido = moment(createData).add(37, 'days');
+    async function enviarFatura() {
         const mensagem = `Olá ${cliente}, seu bot está prestes a ser desligado
         \n**PIX COPIA E COLA: **`;
 
@@ -34,17 +32,20 @@ client.on('ready', () => {
             .setColor('Green')
             .setTimestamp(Date.now());
 
-        if (createData.isAfter(paymentData) && createData.isBefore(vencido)) {
-            cliente.send({
-                content: `${mensagem}\n\`${brCode}\`\n`,
-                embeds: [embed],
-                files: [{
-                    name: 'qrcode.png',
-                    attachment: canvas.toBuffer()
-                }]
-            });
-        }
+        cliente.send({
+            content: `${mensagem}\n\`${brCode}\`\n`,
+            embeds: [embed],
+            files: [{
+                name: 'qrcode.png',
+                attachment: canvas.toBuffer()
+            }]
+        });
+
     }
-    verificarPrazoPagamento();
+
+    cron.schedule('0 0 */1 * *', () => {
+        enviarFatura();
+    });
+
 })
 
