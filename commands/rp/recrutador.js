@@ -41,13 +41,12 @@ module.exports = {
         }
 
         let recruitingData = JSON.parse(fs.readFileSync("./recruitingData.json"));
-
         let index = recruitingData.findIndex(data => data.recrutador.id === recrutador.id);
 
         if (index === -1) {
             recruitingData.push({
                 recrutador: recrutador,
-                recrutados: [recrutado.id] 
+                recrutados: [recrutado.id]
             });
         } else {
             if (recruitingData[index].recrutados.includes(recrutado.id)) {
@@ -59,18 +58,7 @@ module.exports = {
             recruitingData[index].recrutados.push(recrutado.id);
         }
 
-        let maiorRecrutador = recruitingData[0];
-        for (let i = 1; i < recruitingData.length; i++) {
-            if (recruitingData[i].recrutados.length > maiorRecrutador.recrutados.length) {
-                maiorRecrutador = recruitingData[i];
-            }
-        }
-
-        if (maiorRecrutador !== recruitingData[0]) {
-            let index = recruitingData.findIndex(data => data.recrutador.id === maiorRecrutador.recrutador.id);
-            recruitingData.splice(index, 1);
-            recruitingData.unshift(maiorRecrutador);
-        }
+        let sortedRecruitingData = recruitingData.sort((a, b) => b.recrutados.length - a.recrutados.length);
 
         let embed = new Discord.EmbedBuilder()
             .setAuthor({ name: `${interaction.guild.name}`, iconURL: interaction.guild.iconURL({ dynamic: true }) })
@@ -78,7 +66,7 @@ module.exports = {
             .setThumbnail(`${interaction.guild.iconURL({ dynamic: true })}`)
             .setColor("Random");
 
-        recruitingData.forEach((data, index) => {
+        sortedRecruitingData.forEach((data, index) => {
             let recrutador = data.recrutador && client.users.cache.get(data.recrutador.id);
             let recrutadorName = recrutador ? recrutador : (recrutador ? recrutador.username : "Usuário não encontrado");
 
@@ -88,6 +76,7 @@ module.exports = {
                 inline: false
             });
         });
+
         interaction.reply({ content: "Registrado com sucesso!", ephemeral: true });
         const messages = await channel.messages.fetch();
         await channel.bulkDelete(messages);
