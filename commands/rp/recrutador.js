@@ -21,15 +21,18 @@ module.exports = {
 
         let recrutado = interaction.options.getUser("recrutado");
         let recrutador = interaction.user;
-        const channel = interaction.guild.channels.cache.get("1092513372374839438")
-        let canal_logs_id = "1074674482414882847";
-        let canal_logs = client.channels.cache.get(canal_logs_id);
-        if (!canal_logs) return;
+        const channel = interaction.guild.channels.cache.get("1104307495675105340")
+        const canal_logs = client.channels.cache.get("1103190749467648000");
 
         if (recrutado.bot) {
             const warn = new Discord.EmbedBuilder()
                 .setColor("Red")
                 .setDescription("Você não pode recrutar um bot")
+            return interaction.reply({ embeds: [warn], ephemeral: true });
+        } else if (recrutado === interaction.user) {
+            const warn = new Discord.EmbedBuilder()
+                .setColor("Red")
+                .setDescription("Você não pode recrutar a si mesmo")
             return interaction.reply({ embeds: [warn], ephemeral: true });
         }
 
@@ -39,16 +42,22 @@ module.exports = {
 
         let recruitingData = JSON.parse(fs.readFileSync("./recruitingData.json"));
 
-        // Verifica se já existe um campo para o recrutador atual, senão cria um novo campo.
         let index = recruitingData.findIndex(data => data.recrutador.id === recrutador.id);
 
         if (index === -1) {
             recruitingData.push({
                 recrutador: recrutador,
-                recrutados: [recrutado]
+                recrutados: [recrutado.id] // Adiciona o ID do recrutado ao array de recrutados
             });
         } else {
-            recruitingData[index].recrutados.push(recrutado);
+            if (recruitingData[index].recrutados.includes(recrutado.id)) {
+                // Verifica se o usuário já foi recrutado pelo recrutador
+                const error = new Discord.EmbedBuilder()
+                    .setColor("Red")
+                    .setDescription("Este usuário já foi recrutado por você.")
+                return interaction.reply({ embeds: [error], ephemeral: true });
+            }
+            recruitingData[index].recrutados.push(recrutado.id);
         }
 
         let maiorRecrutador = recruitingData[0];
@@ -64,8 +73,6 @@ module.exports = {
             recruitingData.splice(index, 1);
             recruitingData.unshift(maiorRecrutador);
         }
-
-        fs.writeFileSync("./recruitingData.json", JSON.stringify(recruitingData, null, 2));
 
         let embed = new Discord.EmbedBuilder()
             .setAuthor({ name: `${interaction.guild.name}`, iconURL: interaction.guild.iconURL({ dynamic: true }) })
@@ -83,9 +90,12 @@ module.exports = {
                 inline: false
             });
         });
-
         interaction.reply({ content: "Registrado com sucesso!", ephemeral: true });
+        const messages = await channel.messages.fetch();
+        await channel.bulkDelete(messages);
         channel.send({ embeds: [embed] });
+
+        fs.writeFileSync("./recruitingData.json", JSON.stringify(recruitingData, null, 2));
 
         let embed_Log = new Discord.EmbedBuilder()
             .setColor("Green")

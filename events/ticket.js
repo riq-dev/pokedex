@@ -1,9 +1,11 @@
-const Discord = require('discord.js')
+const Discord = require('discord.js');
+const { appendFile } = require('fs/promises');
 client = require('../index')
 Wait = require('wait')
 Transcript = require('discord-html-transcripts');
 const { QuickDB } = require('quick.db');
 const DB = new QuickDB();
+let minhavariavel;
 
 client.on("interactionCreate", async interaction => {
     if (interaction.isStringSelectMenu()) {
@@ -25,12 +27,12 @@ client.on("interactionCreate", async interaction => {
     };
 
     if (interaction.isButton()) {
-        const userG = interaction.user;
-        console.log(`O usuário com o ID ${userG.id} clicou no botão com o customId ${interaction.customId}.`);
         if (interaction.customId === 'Create') {
+            minhavariavel = interaction.user;
+            //console.log(`O usuário com o ID ${userG.id} clicou no botão com o customId ${interaction.customId}.`);
             let channelName = `💡・suporte-${interaction.user.username}`
-            let existingChannel = interaction.guild.channels.cache.find(c => c.name === channelName);
-            if (existingChannel)
+
+            if (interaction.guild.channels.cache.find(c => c.name === channelName))
                 return interaction.reply({ content: `❌ Você já possui um ticket aberto em ${existingChannel}!`, ephemeral: true });
 
             await DB.add(`AMOUNT_${interaction.guildId}`, 1);
@@ -136,6 +138,17 @@ client.on("interactionCreate", async interaction => {
         }
 
         if (interaction.customId === 'Delete' && interaction.member.permissions.has(Discord.PermissionFlagsBits.ManageRoles)) {
+            const transcript = await Transcript.createTranscript(interaction.channel);
+            if (minhavariavel) {
+                const dm = await minhavariavel.createDM();
+                await dm.send({
+                    content: `Olá, aqui está o desfecho do seu ticket, basta fazer **download** e abrir o arquivo .html que abrira uma guia no navegador mostrando as mensagens!`,
+                    files: [transcript]
+                });
+            } else {
+                console.log('Não foi possível encontrar o usuário que interagiu');
+            }
+
 
             interaction.message.components[0].components[1].data.disabled = true;
             interaction.update({ components: [interaction.message.components[0]] });
