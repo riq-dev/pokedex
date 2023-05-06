@@ -21,8 +21,8 @@ module.exports = {
 
         let recrutado = interaction.options.getUser("recrutado");
         let recrutador = interaction.user;
-        const channel = interaction.guild.channels.cache.get("1104307495675105340")
-        const canal_logs = client.channels.cache.get("1103190749467648000");
+        const channel = interaction.guild.channels.cache.get("1092513372374839438")
+        const canal_logs = client.channels.cache.get("1074674482414882847");
 
         if (recrutado.bot) {
             const warn = new Discord.EmbedBuilder()
@@ -47,11 +47,10 @@ module.exports = {
         if (index === -1) {
             recruitingData.push({
                 recrutador: recrutador,
-                recrutados: [recrutado.id] // Adiciona o ID do recrutado ao array de recrutados
+                recrutados: [recrutado.id] 
             });
         } else {
             if (recruitingData[index].recrutados.includes(recrutado.id)) {
-                // Verifica se o usuário já foi recrutado pelo recrutador
                 const error = new Discord.EmbedBuilder()
                     .setColor("Red")
                     .setDescription("Este usuário já foi recrutado por você.")
@@ -67,7 +66,6 @@ module.exports = {
             }
         }
 
-        // Move o maior recrutador para o início do array.
         if (maiorRecrutador !== recruitingData[0]) {
             let index = recruitingData.findIndex(data => data.recrutador.id === maiorRecrutador.recrutador.id);
             recruitingData.splice(index, 1);

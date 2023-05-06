@@ -149,7 +149,6 @@ client.on("interactionCreate", async interaction => {
                 console.log('Não foi possível encontrar o usuário que interagiu');
             }
 
-
             interaction.message.components[0].components[1].data.disabled = true;
             interaction.update({ components: [interaction.message.components[0]] });
             interaction.channel.send({ content: "O canal será removido em 3 segundos..." })
