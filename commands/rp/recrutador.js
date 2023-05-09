@@ -22,14 +22,17 @@ module.exports = {
         let recrutado = interaction.options.getUser("recrutado");
         let recrutador = interaction.user;
         const channel = interaction.guild.channels.cache.get("1092513372374839438")
-        let canal_logs_id = "1074674482414882847";
-        let canal_logs = client.channels.cache.get(canal_logs_id);
-        if (!canal_logs) return;
+        const canal_logs = client.channels.cache.get("1074674482414882847");
 
         if (recrutado.bot) {
             const warn = new Discord.EmbedBuilder()
                 .setColor("Red")
                 .setDescription("Você não pode recrutar um bot")
+            return interaction.reply({ embeds: [warn], ephemeral: true });
+        } else if (recrutado === interaction.user) {
+            const warn = new Discord.EmbedBuilder()
+                .setColor("Red")
+                .setDescription("Você não pode recrutar a si mesmo")
             return interaction.reply({ embeds: [warn], ephemeral: true });
         }
 
@@ -38,34 +41,24 @@ module.exports = {
         }
 
         let recruitingData = JSON.parse(fs.readFileSync("./recruitingData.json"));
-
-        // Verifica se já existe um campo para o recrutador atual, senão cria um novo campo.
         let index = recruitingData.findIndex(data => data.recrutador.id === recrutador.id);
 
         if (index === -1) {
             recruitingData.push({
                 recrutador: recrutador,
-                recrutados: [recrutado]
+                recrutados: [recrutado.id]
             });
         } else {
-            recruitingData[index].recrutados.push(recrutado);
-        }
-
-        let maiorRecrutador = recruitingData[0];
-        for (let i = 1; i < recruitingData.length; i++) {
-            if (recruitingData[i].recrutados.length > maiorRecrutador.recrutados.length) {
-                maiorRecrutador = recruitingData[i];
+            if (recruitingData[index].recrutados.includes(recrutado.id)) {
+                const error = new Discord.EmbedBuilder()
+                    .setColor("Red")
+                    .setDescription("Este usuário já foi recrutado por você.")
+                return interaction.reply({ embeds: [error], ephemeral: true });
             }
+            recruitingData[index].recrutados.push(recrutado.id);
         }
 
-        // Move o maior recrutador para o início do array.
-        if (maiorRecrutador !== recruitingData[0]) {
-            let index = recruitingData.findIndex(data => data.recrutador.id === maiorRecrutador.recrutador.id);
-            recruitingData.splice(index, 1);
-            recruitingData.unshift(maiorRecrutador);
-        }
-
-        fs.writeFileSync("./recruitingData.json", JSON.stringify(recruitingData, null, 2));
+        let sortedRecruitingData = recruitingData.sort((a, b) => b.recrutados.length - a.recrutados.length);
 
         let embed = new Discord.EmbedBuilder()
             .setAuthor({ name: `${interaction.guild.name}`, iconURL: interaction.guild.iconURL({ dynamic: true }) })
@@ -73,7 +66,7 @@ module.exports = {
             .setThumbnail(`${interaction.guild.iconURL({ dynamic: true })}`)
             .setColor("Random");
 
-        recruitingData.forEach((data, index) => {
+        sortedRecruitingData.forEach((data, index) => {
             let recrutador = data.recrutador && client.users.cache.get(data.recrutador.id);
             let recrutadorName = recrutador ? recrutador : (recrutador ? recrutador.username : "Usuário não encontrado");
 
@@ -85,7 +78,11 @@ module.exports = {
         });
 
         interaction.reply({ content: "Registrado com sucesso!", ephemeral: true });
+        const messages = await channel.messages.fetch();
+        await channel.bulkDelete(messages);
         channel.send({ embeds: [embed] });
+
+        fs.writeFileSync("./recruitingData.json", JSON.stringify(recruitingData, null, 2));
 
         let embed_Log = new Discord.EmbedBuilder()
             .setColor("Green")
