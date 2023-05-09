@@ -43,7 +43,7 @@ client.on("interactionCreate", async interaction => {
             const Quantidade = String(await DB.get(`AMOUNT_${interaction.guildId}`)).padStart(4, "0");
             let Canal = await interaction.guild.channels.create(
                 {
-                    name: `💡・suporte-${interaction.user.username}`,
+                    name: `💡・suporte-${interaction.user.tag}`,
                     type: Discord.ChannelType.GuildText,
                     parent: category,
                     permissionOverwrites:
