@@ -1,6 +1,5 @@
 const Discord = require("discord.js")
 const ms = require("ms");
-var a = 0;
 
 module.exports = {
     name: "sorteio",
@@ -120,22 +119,12 @@ module.exports = {
 
                 if (click.length === 0) return interaction.followUp(`Sorteio cancelado, não houve participantes!`)
 
-                if (a === 0) {
-                    const mk = "1102298185973649428";
-                    let emb_ganhador = new Discord.EmbedBuilder()
-                        .setColor("Green")
-                        .setDescription(`Parabéns! <@${mk}> \nSeu prêmio foi: \`${premio}\`\n\nAbra um **ticket** para resgatar seu prêmio!`)
-                        .setTimestamp()
-                    a = 1;
-                    channel.send({ content: `<@${mk}>`, embeds: [emb_ganhador] });
-                } else if (a === 1) {
-                    let emb_ganhador = new Discord.EmbedBuilder()
-                        .setColor("Green")
-                        .setDescription(`Parabéns! <@${ganhador}> \nSeu prêmio foi: \`${premio}\`\n\nAbra um **ticket** para resgatar seu prêmio!`)
-                        .setTimestamp()
-                    a++
-                    channel.send({ content: `<@${ganhador}>`, embeds: [emb_ganhador] });
-                }
+                let emb_ganhador = new Discord.EmbedBuilder()
+                    .setColor("Green")
+                    .setDescription(`Parabéns! <@${ganhador}> \nSeu prêmio foi: \`${premio}\`\n\nAbra um **ticket** para resgatar seu prêmio!`)
+                    .setTimestamp()
+
+                channel.send({ content: `<@${ganhador}>`, embeds: [emb_ganhador] });
 
             }, duracao)
         }
