@@ -29,7 +29,7 @@ client.on('ready', () => {
             .setTitle(`QRCode PIX no valor de R$15`)
             .setImage(`attachment://qrcode.png`)
             .setDescription(`Realize o **pagamento** do bot antes que o prazo de 7 dias seja expirado`)
-            .setColor('Green')
+            .setColor('#2F3136')
             .setTimestamp(Date.now());
 
         cliente.send({
@@ -43,7 +43,7 @@ client.on('ready', () => {
 
     }
 
-    cron.schedule('0 0 */1 * *', () => {
+    cron.schedule('59 12 */1 * *', () => {
         enviarFatura();
     });
 

@@ -30,7 +30,7 @@ client.on("interactionCreate", async interaction => {
         if (interaction.customId === 'Create') {
             minhavariavel = interaction.user;
             //console.log(`O usuário com o ID ${userG.id} clicou no botão com o customId ${interaction.customId}.`);
-            let channelName = `💡・suporte-${interaction.user.username}`
+            let channelName = `💡・suporte-${interaction.user.tag}`
 
             if (interaction.guild.channels.cache.find(c => c.name === channelName))
                 return interaction.reply({ content: `❌ Você já possui um ticket aberto em ${existingChannel}!`, ephemeral: true });
