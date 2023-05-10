@@ -78,8 +78,6 @@ module.exports = {
         });
 
         interaction.reply({ content: "Registrado com sucesso!", ephemeral: true });
-        const messages = await channel.messages.fetch();
-        await channel.bulkDelete(messages);
         channel.send({ embeds: [embed] });
 
         fs.writeFileSync("./recruitingData.json", JSON.stringify(recruitingData, null, 2));
