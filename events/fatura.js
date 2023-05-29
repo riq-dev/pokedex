@@ -15,9 +15,9 @@ client.on('ready', () => {
         const pix = PIX.static().setReceiverName(client.user.username)
             .setReceiverCity('Brasil')
             .setKey('496f02d7-0c7c-4346-8119-1cb677ba93c5')
-            .setAmount(15);
+            .setAmount(30);
 
-        const canvas = Canvas.createCanvas(1200, 1200);
+        const canvas = Canvas.createCanvas(600, 600);
         const context = canvas.getContext('2d');
         const qrCodeImage = await Canvas.loadImage(await pix.getQRCode());
         context.fillStyle = '#FFFFFF';
@@ -26,14 +26,14 @@ client.on('ready', () => {
 
         const brCode = pix.getBRCode();
         const embed = new Discord.EmbedBuilder()
-            .setTitle(`QRCode PIX no valor de R$15`)
+            .setTitle(`QRCode PIX no valor de R$35`)
             .setImage(`attachment://qrcode.png`)
             .setDescription(`Realize o **pagamento** do bot antes que o prazo de 7 dias seja expirado`)
             .setColor('#2F3136')
             .setTimestamp(Date.now());
 
         cliente.send({
-            content: `${mensagem}\n\`${brCode}\`\n`,
+            content: `${mensagem}\n\`\`\`${brCode}\`\`\`\n`,
             embeds: [embed],
             files: [{
                 name: 'qrcode.png',
@@ -43,9 +43,8 @@ client.on('ready', () => {
 
     }
 
-    cron.schedule('59 12 */1 * *', () => {
-        enviarFatura();
-    });
-
+        cron.schedule('00 12 1 * *', () => {
+            enviarFatura();
+        }); 
 })
 

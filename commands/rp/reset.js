@@ -46,6 +46,6 @@ module.exports = {
     }
 }
 
-cron.schedule('59 23 * * 1', () => {
+/* cron.schedule('59 23 * * 1', () => {
     resetRanking();
-});
+}); */

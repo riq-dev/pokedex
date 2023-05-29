@@ -9,7 +9,7 @@ client.on("interactionCreate", async interaction => {
                 .setColor("Green")
                 .setTitle("RECRUTAMENTO")
                 .setDescription(`Clique no **botão** abaixo para iniciar o seu recrutamento!`)
-                .setImage("https://share.creavite.co/j904X3ZNpcnlJATg.gif")
+                .setImage("https://share.creavite.co/4Y3IjYSOdrCizKHr.gif")
             let RoWL = new Discord.ActionRowBuilder().addComponents(
                 new Discord.ButtonBuilder().setStyle(Discord.ButtonStyle.Secondary).setCustomId('iniciar').setLabel('Iniciar recrutamento').setEmoji('📤')
             );
@@ -22,7 +22,14 @@ client.on("interactionCreate", async interaction => {
 
     if (interaction.isButton()) {
         if (interaction.customId === 'iniciar') {
-            let channelName = `⏳・recrutamento-${interaction.user.username}`
+            let interactionUsuario = interaction.user.tag;
+            let nomeUser = interactionUsuario.toLowerCase();
+            if (nomeUser.includes(" ")) { nomeUser = nomeUser.replace(/\s+/g, "-"); }
+            if (nomeUser.includes("#")) {
+                nomeUser = nomeUser.replace("#", "-");
+            }
+
+            let channelName = `⏳・recrutamento-${nomeUser}`
             let existingChannel = interaction.guild.channels.cache.find(c => c.name === channelName);
             if (existingChannel) {
                 return interaction.reply({ content: `❌ Você já possui um ticket aberto em ${existingChannel}!`, ephemeral: true });
@@ -33,7 +40,7 @@ client.on("interactionCreate", async interaction => {
             const categoria = "1074830440118091826"
             let canal = await interaction.guild.channels.create(
                 {
-                    name: `⏳・recrutamento-${interaction.user.username}`,
+                    name: channelName,
                     type: Discord.ChannelType.GuildText,
                     parent: categoria,
                     permissionOverwrites:
@@ -65,10 +72,16 @@ client.on("interactionCreate", async interaction => {
             enviarPergunta1();
             const collectorFilter = (response) => response.author.id === interaction.user.id;
 
+            async function verifyChannel() {
+                if (!canal || canal.deleted) {
+                    return;
+                }
+            }
+
             async function enviarPergunta1() {
                 const msg1 = await canal.send({ embeds: [embed] });
                 const collector = canal.createMessageCollector({ filter: collectorFilter, max: 1, time: 180000 });
-
+                verifyChannel()
                 collector.on('collect', (m) => {
                     userName = m.content;
                     interaction.member.setNickname(`${userName} #?????`);
@@ -86,10 +99,9 @@ client.on("interactionCreate", async interaction => {
 
             async function enviarPergunta2() {
                 embed.setTitle("Qual seu ID no jogo?")
-
                 const msg2 = await canal.send({ embeds: [embed] });
                 const collector = canal.createMessageCollector({ filter: collectorFilter, max: 1, time: 180000 });
-
+                verifyChannel()
                 collector.on('collect', (m) => {
                     const userID = m.content;
                     interaction.member.setNickname(`${userName} #${userID}`);
@@ -108,8 +120,8 @@ client.on("interactionCreate", async interaction => {
             async function enviarPerguntaAge() {
                 embed.setTitle("Qual sua idade na vida real?")
                 msgAge = await canal.send({ embeds: [embed] });
+                verifyChannel()
                 const collector = canal.createMessageCollector({ filter: collectorFilter, max: 1, time: 180000 });
-
                 collector.on('collect', (m) => {
                     userAge = m.content;
                     msgAge.delete();
@@ -154,6 +166,7 @@ client.on("interactionCreate", async interaction => {
 
                 const msg3 = await canal.send({ embeds: [embed], components: [painel] });
                 msg3.createMessageComponentCollector().on("collect", (interaction, reason) => {
+                    verifyChannel()
                     const valor = interaction.values[0];
                     if (valor === 'c') {
                         acertos++;
@@ -193,6 +206,7 @@ client.on("interactionCreate", async interaction => {
 
                 const msg4 = await canal.send({ embeds: [embed], components: [painel] });
                 msg4.createMessageComponentCollector().on("collect", (interaction, reason) => {
+                    verifyChannel()
                     const valor = interaction.values[0];
                     if (valor === 'b') {
                         acertos++;
@@ -233,6 +247,7 @@ client.on("interactionCreate", async interaction => {
 
                 const msg5 = await canal.send({ embeds: [embed], components: [painel] });
                 msg5.createMessageComponentCollector().on("collect", (interaction, reason) => {
+                    verifyChannel()
                     const valor = interaction.values[0];
                     if (valor === 'b') {
                         acertos++;
@@ -273,6 +288,7 @@ client.on("interactionCreate", async interaction => {
 
                 const msg6 = await canal.send({ embeds: [embed], components: [painel] });
                 msg6.createMessageComponentCollector().on("collect", (interaction, reason) => {
+                    verifyChannel()
                     const valor = interaction.values[0];
                     if (valor === 'c') {
                         acertos++;
@@ -313,6 +329,7 @@ client.on("interactionCreate", async interaction => {
 
                 const msg7 = await canal.send({ embeds: [embed], components: [painel] });
                 msg7.createMessageComponentCollector().on("collect", (interaction, reason) => {
+                    verifyChannel()
                     const valor = interaction.values[0];
                     if (valor === 'a') {
                         acertos++;
@@ -353,6 +370,7 @@ client.on("interactionCreate", async interaction => {
 
                 const msg8 = await canal.send({ embeds: [embed], components: [painel] });
                 msg8.createMessageComponentCollector().on("collect", (interaction, reason) => {
+                    verifyChannel()
                     const valor = interaction.values[0];
                     if (valor === 'c') {
                         acertos++;
@@ -393,6 +411,7 @@ client.on("interactionCreate", async interaction => {
 
                 const msg9 = await canal.send({ embeds: [embed], components: [painel] });
                 msg9.createMessageComponentCollector().on("collect", (interaction, reason) => {
+                    verifyChannel()
                     const valor = interaction.values[0];
                     if (valor === 'a') {
                         acertos++;

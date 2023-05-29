@@ -29,10 +29,14 @@ client.on("interactionCreate", async interaction => {
     if (interaction.isButton()) {
         if (interaction.customId === 'Create') {
             minhavariavel = interaction.user;
+            let name = interaction.user.username
+            let nameUser = name.toLowerCase();
+            if (nameUser.includes(" ")) {
+                nameUser = nameUser.replace(/\s+/g, "-");
+            }
             //console.log(`O usuário com o ID ${userG.id} clicou no botão com o customId ${interaction.customId}.`);
-            let channelName = `💡・suporte-${interaction.user.tag}`
-
-            if (interaction.guild.channels.cache.find(c => c.name === channelName))
+            let existingChannel = interaction.guild.channels.cache.find(c => c.name === `💡・suporte-${nameUser}`);
+            if (existingChannel)
                 return interaction.reply({ content: `❌ Você já possui um ticket aberto em ${existingChannel}!`, ephemeral: true });
 
             await DB.add(`AMOUNT_${interaction.guildId}`, 1);
@@ -43,7 +47,7 @@ client.on("interactionCreate", async interaction => {
             const Quantidade = String(await DB.get(`AMOUNT_${interaction.guildId}`)).padStart(4, "0");
             let Canal = await interaction.guild.channels.create(
                 {
-                    name: `💡・suporte-${interaction.user.tag}`,
+                    name: `💡・suporte-${nameUser}`,
                     type: Discord.ChannelType.GuildText,
                     parent: category,
                     permissionOverwrites:
